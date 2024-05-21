@@ -1,5 +1,4 @@
 import spotipy, dotenv, os
-import logging
 from spotipy.oauth2 import SpotifyClientCredentials
 
 # Import environment variables
@@ -9,15 +8,10 @@ def spotify_login():
     spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(os.getenv("SPOTIPY_CLIENT_ID"), os.getenv("SPOTIPY_CLIENT_SECRET")))
     return spotify
 
-def search_track(artist: str, track: str):
-    
-    logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
-    rootLogger = logging.getLogger()
-
-    consoleHandler = logging.StreamHandler()
-    consoleHandler.setFormatter(logFormatter)
-    rootLogger.addHandler(consoleHandler)
-
+def get_tracks(artist: str, track: str): 
+    if artist == '' or track == '':
+        error = f"Two parameter need to be passed: 1.artist: {artist}  2.track:, {track}"
+        return error
     try:
         spotify = spotify_login()
 
@@ -31,14 +25,18 @@ def search_track(artist: str, track: str):
                         }}
             tracks_info.update(track_info)
 
-        print(tracks_info)
+        if tracks_info == {}:
+            error = f"Nothing was found with the following parameters: artist: {artist}  track: {track}"
+            return error
         return tracks_info
     except:
-        print("There was an error trying to obtain the track", "The values sent are artist:", artist, "track:", track)
+        error = "There was an error trying to obtain the track resulting in a crash in spotipy" 
+        return error
 
 if __name__ == "__main__":
     spotify_login()
-    tracks = search_track('Imagine Dragons', 'radioactive')
+    tracks = get_tracks('imagine', 'radio')
+    print(tracks)
     # for track in tracks:
     #     print(f"Name: {track['name']}, Artist: {track['artist']}, Album: {track['album']}, URI: {track['uri']}")
 
