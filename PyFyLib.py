@@ -12,9 +12,15 @@ def spotify_login(id, secret):
     spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(id, secret))
     return spotify
 
-def get_tracks(artist: str, track: str, spotify): 
+def get_tracks(artist: str = '', track: str = ''): 
+    if artist == '':
+        raise Exception(f"No artist: {artist} was passed to the function")
+    if track == '':
+        raise Exception(f"No track: {track} name was passed to the function")
+
     try:
-        track_id = spotify.search(q='artist:' + artist + ' track:' + track, type='track')
+        spotify = spotify_login(id, secret)
+        track_id = spotify.search(q='artist:' + artist + ' track:' + track, type='track', limit=10)
         tracks_info = {} 
         for index, content in enumerate(track_id['tracks']['items']): 
             track_info = { index: 
@@ -36,7 +42,6 @@ def get_tracks(artist: str, track: str, spotify):
 
 if __name__ == "__main__":
     id, secret = import_vars()
-    spotify = spotify_login(id, secret)
-    tracks = get_tracks('hugo tsr', 'coma artificiel', spotify)
+    tracks = get_tracks('hugo', 'coma')
     print(tracks)
 
