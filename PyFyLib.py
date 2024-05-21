@@ -1,42 +1,42 @@
-import spotipy, dotenv, os
+import spotipy, dotenv, os, traceback
 from spotipy.oauth2 import SpotifyClientCredentials
 
 # Import environment variables
-dotenv.load_dotenv()
+def import_vars(): 
+    dotenv.load_dotenv()
+    id = os.getenv("SPOTIPY_CLIENT_ID")
+    secret = os.getenv("SPOTIPY_CLIENT_SECRET")
+    return id, secret
 
-def spotify_login():
-    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(os.getenv("SPOTIPY_CLIENT_ID"), os.getenv("SPOTIPY_CLIENT_SECRET")))
+def spotify_login(id, secret):
+    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(id, secret))
     return spotify
 
-def get_tracks(artist: str, track: str): 
-    if artist == '' or track == '':
-        error = f"Two parameter need to be passed: 1.artist: {artist}  2.track:, {track}"
-        return error
+def get_tracks(artist: str, track: str, spotify): 
     try:
-        spotify = spotify_login()
-
         track_id = spotify.search(q='artist:' + artist + ' track:' + track, type='track')
         tracks_info = {} 
         for index, content in enumerate(track_id['tracks']['items']): 
             track_info = { index: 
                         {'artist': content['artists'][0]['name'],
                         'track': content['name'],
-                        'id': content['id']
+                        'id': content['id'],
+                        'audio': content['external_urls']['spotify'],
+                        'image': content['album']['images'][0]['url'],
+                        'preview': content['preview_url']
                         }}
             tracks_info.update(track_info)
 
         if tracks_info == {}:
-            error = f"Nothing was found with the following parameters: artist: {artist}  track: {track}"
-            return error
+            raise Exception(f"Nothing was found with the following parameters: artist: {artist}  track: {track}")
+
         return tracks_info
-    except:
-        error = "There was an error trying to obtain the track resulting in a crash in spotipy" 
-        return error
+    except Exception:
+        return traceback.format_exc()
 
 if __name__ == "__main__":
-    spotify_login()
-    tracks = get_tracks('imagine', 'radio')
+    id, secret = import_vars()
+    spotify = spotify_login(id, secret)
+    tracks = get_tracks('hugo tsr', 'coma artificiel', spotify)
     print(tracks)
-    # for track in tracks:
-    #     print(f"Name: {track['name']}, Artist: {track['artist']}, Album: {track['album']}, URI: {track['uri']}")
 
