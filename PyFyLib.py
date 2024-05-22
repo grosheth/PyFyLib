@@ -1,25 +1,26 @@
 import spotipy, dotenv, os, traceback
-from spotipy.oauth2 import SpotifyClientCredentials
+from spotipy.oauth2 import SpotifyOAuth
 
 # Import environment variables
-def import_vars(): 
+def import_vars():
     dotenv.load_dotenv()
-    id = os.getenv("SPOTIPY_CLIENT_ID")
-    secret = os.getenv("SPOTIPY_CLIENT_SECRET")
-    return id, secret
+    client_id = os.getenv("SPOTIPY_CLIENT_ID")
+    client_secret = os.getenv("SPOTIPY_CLIENT_SECRET")
+    redirect_uri = os.getenv("REDIRECT_URL")
+    return client_id, client_secret, redirect_uri
 
-def spotify_login(id, secret):
-    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(id, secret))
+def spotify_login():
+    spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id, client_secret, redirect_uri, scope='user-read-playback-state'))
     return spotify
 
-def get_tracks(artist: str = '', track: str = ''): 
-    if artist == '':
-        raise Exception(f"No artist: {artist} was passed to the function")
-    if track == '':
-        raise Exception(f"No track: {track} name was passed to the function")
-
+def get_tracks(artist: str = '', track: str = ''):
     try:
-        spotify = spotify_login(id, secret)
+        if artist == '':
+            raise Exception(f"No artist: {artist} was passed to the function")
+        if track == '':
+            raise Exception(f"No track: {track} name was passed to the function")
+
+        spotify = spotify_login()
         track_id = spotify.search(q='artist:' + artist + ' track:' + track, type='track', limit=10)
         tracks_info = {} 
         for index, content in enumerate(track_id['tracks']['items']): 
@@ -27,6 +28,7 @@ def get_tracks(artist: str = '', track: str = ''):
                         {'artist': content['artists'][0]['name'],
                         'track': content['name'],
                         'id': content['id'],
+                        'uri': content['uri'],
                         'audio': content['external_urls']['spotify'],
                         'image': content['album']['images'][0]['url'],
                         'preview': content['preview_url']
@@ -40,8 +42,12 @@ def get_tracks(artist: str = '', track: str = ''):
     except Exception:
         return traceback.format_exc()
 
+def play_track(track):
+    spotify = spotify_login()
+    spotify.start_playback(context_uri=track)
+
 if __name__ == "__main__":
-    id, secret = import_vars()
+    client_id, client_secret, redirect_uri = import_vars()
     tracks = get_tracks('hugo', 'coma')
-    print(tracks)
+    play_track(tracks[0]['uri'])
 
