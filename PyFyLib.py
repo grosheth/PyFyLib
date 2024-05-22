@@ -10,7 +10,7 @@ def import_vars():
     return client_id, client_secret, redirect_uri
 
 def spotify_login():
-    spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id, client_secret, redirect_uri, scope='user-read-playback-state'))
+    spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id, client_secret, redirect_uri, scope='streaming'))
     return spotify
 
 def get_tracks(artist: str = '', track: str = ''):
@@ -28,7 +28,7 @@ def get_tracks(artist: str = '', track: str = ''):
                         {'artist': content['artists'][0]['name'],
                         'track': content['name'],
                         'id': content['id'],
-                        'uri': content['uri'],
+                        'uri': [content['uri']],
                         'audio': content['external_urls']['spotify'],
                         'image': content['album']['images'][0]['url'],
                         'preview': content['preview_url']
@@ -44,10 +44,10 @@ def get_tracks(artist: str = '', track: str = ''):
 
 def play_track(track):
     spotify = spotify_login()
-    spotify.start_playback(context_uri=track)
+    spotify.start_playback(uris=track)
 
 if __name__ == "__main__":
     client_id, client_secret, redirect_uri = import_vars()
-    tracks = get_tracks('hugo', 'coma')
+    tracks = get_tracks('radiohead', 'ai')
     play_track(tracks[0]['uri'])
 
