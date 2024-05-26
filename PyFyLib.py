@@ -42,20 +42,15 @@ def get_tracks(artist: str = '', track: str = ''):
     except Exception:
         return traceback.format_exc()
 
-# def get_playlists():
-#     try:
-#         spotify = spotify_login()
-#         playlists = spotify.user_playlists('spotify')
-#         while playlists:
-#             for i, playlist in enumerate(playlists['items']):
-#                 print("%4d %s %s" % (playlist['uri'],  playlist['name']))
-#             if playlists['next']:
-#                 playlists = spotify.next(playlists)
-#             else:
-#                 playlists = None
-#                 print(playlists)
-#     except Exception:
-#         return traceback.format_exc()
+def get_user_playlists():
+    try:
+        spotify = spotify_login()
+        playlists = spotify.current_user_playlists()
+        print(playlists['items'])
+        for i, playlist in enumerate(playlists['items']):
+            print(playlist['name'])
+    except Exception:
+        return traceback.format_exc()
 
 def play_track(track):
     spotify = spotify_login()
@@ -64,7 +59,7 @@ def play_track(track):
 if __name__ == "__main__":
     client_id, client_secret, redirect_uri = import_vars()
 
-    # get_playlists()
+    get_user_playlists()
     # tracks = get_tracks('hugo tsr', 'coma artificiel')
     # play_track(tracks[0]['uri'])
 
