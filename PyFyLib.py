@@ -47,7 +47,7 @@ def get_user_playlists():
         spotify = spotify_login()
         playlists = spotify.current_user_playlists()
         print(playlists['items'])
-        for i, playlist in enumerate(playlists['items']):
+        for _, playlist in enumerate(playlists['items']):
             print(playlist['name'])
     except Exception:
         return traceback.format_exc()
