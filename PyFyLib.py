@@ -46,20 +46,72 @@ def get_user_playlists():
     try:
         spotify = spotify_login()
         playlists = spotify.current_user_playlists()
-        print(playlists['items'])
-        for _, playlist in enumerate(playlists['items']):
-            print(playlist['name'])
+
+        playlists_info = {}
+        for index, playlist in enumerate(playlists['items']):
+            playlist_info = { index: 
+                        {'name': playlist['name'],
+                        'id': playlist['id'],
+                        'uri': playlist['uri'],
+                        'audio': playlist['external_urls']['spotify'],
+                        'image': playlist['images'][0]['url'],
+                        }}
+            playlists_info.update(playlist_info)
+
+        return playlists_info
     except Exception:
         return traceback.format_exc()
 
-def play_track(track):
-    spotify = spotify_login()
-    spotify.start_playback(uris=track)
+def play_song(track):
+    try:
+        spotify = spotify_login()
+        spotify.start_playback(uris=track)
+    except:
+        return traceback.format_exc()
+
+def play_playlist(playlist): 
+    try:
+        spotify = spotify_login()
+        spotify.start_playback(context_uri=playlist)
+    except:
+        return traceback.format_exc()
+
+def set_shuffle(state):
+    try:
+        spotify = spotify_login()
+        spotify.shuffle(state)
+    except:
+        return traceback.format_exc()
+
+def pause():
+    try:
+        spotify = spotify_login()
+        spotify.pause_playback() 
+    except:
+        return traceback.format_exc()
+
+def next(): 
+    try:
+        spotify = spotify_login()
+        spotify.next_track() 
+    except:
+        return traceback.format_exc()
+
+# Can be used to show current song image etc..
+def get_current_song():
+    try:
+        spotify = spotify_login()
+        spotify.current_playback() 
+    except:
+        return traceback.format_exc()
 
 if __name__ == "__main__":
     client_id, client_secret, redirect_uri = import_vars()
 
-    get_user_playlists()
+    playlist = get_user_playlists()
+
     # tracks = get_tracks('hugo tsr', 'coma artificiel')
-    # play_track(tracks[0]['uri'])
+    # play(tracks[1]['uri'])
+    # play_playlist(playlist[1]['uri'])
+    set_shuffle(True)
 
