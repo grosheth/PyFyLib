@@ -105,7 +105,6 @@ class PyFyLib():
 
 if __name__ == "__main__":
     print("calling PyFyLib")
-    
     # client_id, client_secret, redirect_uri = import_vars()
     # playlist = get_user_playlists()
     # pyfylib = PyFyLib()
