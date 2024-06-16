@@ -110,8 +110,9 @@ if __name__ == "__main__":
     # pyfylib = PyFyLib()
 
     # PyTuiFy input
-    # tracks = pyfylib.get_tracks('radiohead', 'reckoner')
+    # tracks = pyfylib.get_tracs('radiohead', 'reckoner')
 
+    # Use cases
     # pyfylib.pause()
     # pyfylib.next()
     # pyfylib.previous()
