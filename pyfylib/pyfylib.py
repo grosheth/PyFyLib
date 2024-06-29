@@ -1,14 +1,6 @@
 import spotipy, dotenv, os, traceback
 from spotipy.oauth2 import SpotifyOAuth
-
-# Import environment variables
-# These are prerequisites in apps calling this module
-def import_vars():
-    dotenv.load_dotenv()
-    client_id = os.getenv("SPOTIPY_CLIENT_ID")
-    client_secret = os.getenv("SPOTIPY_CLIENT_SECRET")
-    redirect_uri = os.getenv("REDIRECT_URL")
-    return client_id, client_secret, redirect_uri
+from pyfylib.utils import import_secrets 
 
 class PyFyLib():
     def __init__(self):
