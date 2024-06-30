@@ -2,8 +2,14 @@ import spotipy, dotenv, os, traceback
 from spotipy.oauth2 import SpotifyOAuth
 from pyfylib.utils import import_secrets 
 
-class PyFyLib():
+class Pyfylib():
+    """
+        Example usage:
+            import pyfylib
+    """
+
     def __init__(self):
+        import_secrets():
         self.spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id, client_secret, redirect_uri, scope='streaming'))
 
     def get_tracks(self, artist: str = '', track: str = ''):
